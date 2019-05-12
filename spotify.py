@@ -1,7 +1,27 @@
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials  
+from enum import Enum
+
+class Key(Enum):
+    
+    C = 0
+    Db = 1
+    D = 2
+    Eb = 3
+    E = 4
+    F = 5
+    Gb = 6
+    G = 7
+    Ab = 8
+    A = 9
+    Bb = 10
+    B = 11
+
+# Converts intergers into keys 
+
 
 class Song:
+
     def __init__(self, track):
         self.id = track['id']
         self.name = track['name']
@@ -10,6 +30,15 @@ class Song:
         self.acousticness = audio_features[0]['acousticness']
         self.key = audio_features[0]['key']
         self.danceability= audio_features[0]['danceability']
+
+    def GetName(self):
+        return self.name
+
+    def GetKey(self):
+        return Key(self.key).name
+        
+
+#Class for storing all information about a song
 
 class Album:
 
@@ -27,9 +56,9 @@ class Album:
         for n in range(len(tracks['items'])): #for each song track
             self.songs.append(Song(tracks['items'][n])) 
 
-    def PrintInfo(self, key):
-        for i in self.info[key]:
-            print(i)
+    def PrintAlbumInfo(self):
+        for song in self.songs:
+            print(song.GetName(), song.GetKey())
 
 # Class for storing all information about an album
 
@@ -49,8 +78,9 @@ class Artist:
         self.album_uris = []
         self.album_names = []
         for i in range(len(sp_albums['items'])):
-            self.album_uris.append(sp_albums['items'][i]['uri'])
-            self.album_names.append(sp_albums['items'][i]['name'])
+            if self.album_uris == [] or sp_albums['items'][i]['name'] not in self.album_names:
+                self.album_uris.append(sp_albums['items'][i]['uri'])
+                self.album_names.append(sp_albums['items'][i]['name'])
 
 # Class for artist information
 
@@ -78,7 +108,7 @@ count = 0
 print("Songs and albums from", artist.name)
 for name in artist.album_names:
     albums.append(Album(name, artist.album_uris[count]))
-    print(name)
-    #albums[count].PrintInfo('song_name')
+    print("Album: ",name)
+    albums[count].PrintAlbumInfo()
     count+=1
 
