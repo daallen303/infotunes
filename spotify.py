@@ -1,35 +1,35 @@
 import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials 
+from spotipy.oauth2 import SpotifyClientCredentials  
+
+class Song:
+    def __init__(self, track):
+        self.id = track['id']
+        self.name = track['name']
+        
+        audio_features = sp.audio_features(track['id'])
+        self.acousticness = audio_features[0]['acousticness']
+        self.key = audio_features[0]['key']
+        self.danceability= audio_features[0]['danceability']
 
 class Album:
 
-
-    def __init__(self, name,uri):
+    def __init__(self, name, uri):
         
         self.uri = uri
         self.name = name
-        
-        self.info = {} #creates dictionary for that specific album
+        self.songs = []        
 
         #create keys-values of empty lists inside nested dictionary for album
-        self.info['track_number'] = []
-        self.info['song_id'] = []
-        self.info['song_name'] = []
-        self.info['song_uri'] = []
+        
 
         tracks = sp.album_tracks(self.uri) 
- 
+        
         for n in range(len(tracks['items'])): #for each song track
-            self.info['track_number'].append(tracks['items'][n]['track_number'])
-            self.info['song_id'].append(tracks['items'][n]['id'])
-            self.info['song_name'].append(tracks['items'][n]['name'])
-            self.info['song_uri'].append(tracks['items'][n]['uri'])
+            self.songs.append(Song(tracks['items'][n])) 
 
     def PrintInfo(self, key):
         for i in self.info[key]:
             print(i)
-        
-
 
 # Class for storing all information about an album
 
@@ -50,7 +50,7 @@ class Artist:
         self.album_names = []
         for i in range(len(sp_albums['items'])):
             self.album_uris.append(sp_albums['items'][i]['uri'])
-            self.album_names.append(sp_albums['items'][i]['uri'])
+            self.album_names.append(sp_albums['items'][i]['name'])
 
 # Class for artist information
 
@@ -70,6 +70,8 @@ sp = GetCertified(client_id, client_secret);
 name = input("Enter an artists name:\n") # chosen artist
 artist = Artist(name)
 
+#key = input("What would you like to know?")
+
 albums = []
 count = 0
 
@@ -77,6 +79,6 @@ print("Songs and albums from", artist.name)
 for name in artist.album_names:
     albums.append(Album(name, artist.album_uris[count]))
     print(name)
-    albums[count].PrintInfo('song_name')
+    #albums[count].PrintInfo('song_name')
     count+=1
 
