@@ -17,7 +17,7 @@ class Key(Enum):
     Bb = 10
     B = 11
 
-# Converts intergers into keys 
+# Converts intergers into keys
 
 
 class Song:
@@ -84,7 +84,31 @@ class Artist:
 
 # Class for artist information
 
+class Playlist:
 
+    def __init__(self, playlist):
+        self.name = playlist['name']
+        self.owner = playlist['owner']
+        self.tracks = playlist['tracks']
+        
+        print(self.name)
+# Class for storing information about a specific playlist
+
+class User:
+    
+    def __init__(self, user_name):
+        self.name = user_name
+        
+        user_info = sp.user(self.name)
+        self.display_name = user_info['display_name']
+        
+        playlist_info = sp.user_playlists(self.name)
+
+        self.playlists = []
+        for n in range(len(playlist_info['items'])):
+            self.playlists.append(Playlist(playlist_info['items'][n]))
+
+# Class for storing info on a user
 
 def GetCertified(client_id, client_secret):
     client_credentials_manager = SpotifyClientCredentials(client_id=client_id,client_secret=client_secret)
@@ -97,7 +121,7 @@ client_secret = "ba975017397d4b13aad38f876b5b99ad"
 sp = GetCertified(client_id, client_secret);
 
 
-name = input("Enter an artists name:\n") # chosen artist
+"""name = input("Enter an artists name:\n") # chosen artist
 artist = Artist(name)
 
 #key = input("What would you like to know?")
@@ -110,5 +134,7 @@ for name in artist.album_names:
     albums.append(Album(name, artist.album_uris[count]))
     print("Album: ",name)
     albums[count].PrintAlbumInfo()
-    count+=1
+    count+=1"""
+user_name = User("daallen-us")
+sp.search(user_name)
 
