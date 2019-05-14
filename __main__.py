@@ -1,27 +1,58 @@
 #from  music.album import Album
 from music.artist import Artist
+from music.album import Album
+from music.song import Song
 from credentials import SpotifyManager
 from threading import Thread
 
-def GetArtist():
+spotify_manager = SpotifyManager()
+sp = spotify_manager.GetCertified()
 
-    name = input("Enter an artists name:\n") # chosen artist
-    spotify_manager = SpotifyManager()
-    sp = spotify_manager.GetCertified()
-    result = sp.search(name)
-    #pull all of the artists albums
-    artist_uri = result['tracks']['items'][0]['artists'][0]['uri']
-    sp_albums = sp.artist_albums(artist_uri,album_type='album')
-    artist = Artist(name, sp_albums)
-    artist.GetAlbumNames()
-    return artist
+def GetArtistsAlbums(sp_albums):
+    albums = []
+    album_names = []
+    album_uris = []
+    songs = []
 
-t1 = Thread(target=GetArtist, args=())
-t1.start()
-t1.join()
+    count = 0
+    
+    for i in range(len(sp_albums['items'])):
+        if albums == [] or sp_albums['items'][i]['name'] not in album_names:
+            album_names.append(sp_albums['items'][i]['name'])
+            album_uris.append(sp_albums['items'][i]['uri'])
+            albums.append(Album(sp_albums['items'][i]['uri'], sp_albums['items'][i]['name']))
+            tracks = sp.album_tracks(sp_albums['items'][i]['uri'])
+            for i in range(len(tracks['items'])):
+                audio_features = sp.audio_features(tracks['items'][i]['uri'])
+                songs.append(Song(tracks['items'][i]['name'], tracks['items'][i]['uri'], audio_features))
+                albums[count].AddSong(songs[count])
+            count+=1
 
+    return (albums, songs, album_names, album_uris)
+    
+def GetSongsFromAlbum(tracks):
 
+    audio_features = sp.audio_features(track['id'])
 
+#t1 = Thread(target=GetArtist, args=())
+#t1.start()
+#t1.join()
+
+name = "six60" 
+result = sp.search(name)
+
+artist_uri = result['tracks']['items'][0]['artists'][0]['uri']
+
+artist = Artist(name, artist_uri)
+sp_albums = sp.artist_albums(artist_uri ,album_type='album')
+# (albums, songs, album_names, album_uris)
+tuple = GetArtistsAlbums(sp_albums)
+artist.SetAlbums(tuple[2], tuple[3])
+albums = tuple[0]
+songs = tuple[1]
+print(albums[0].GetName())
+print(albums[0].GetSongNames())
+print(songs[0].GetKey())
 """
 albums = []
 count = 0

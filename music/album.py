@@ -1,5 +1,4 @@
 from .song import Song
-from .musiccred import SpotifyManager 
 
 class Album:
 
@@ -7,20 +6,18 @@ class Album:
         
         self.uri = uri
         self.name = name
-        self.songs = []
-
-        #create keys-values of empty lists inside nested dictionary for album
-        spotify_manager = SpotifyManager()
-        sp = spotify_manager.GetCertified()
-        tracks = sp.album_tracks(self.uri) 
+        self.song_names = []
+        self.song_uris = []
         
-        for n in range(len(tracks['items'])): #for each song track
-            self.songs.append(Song(tracks['items'][n], sp)) 
+    def SetSongs(self, song_names, song_uris):
+        self.song_names = song_names
+        self.song_uris = song_uris
 
-    def PrintAlbumInfo(self):
-        for song in self.songs:
-            print(song.GetName(), song.GetKey())
+    def GetSongNames(self):
+        return self.song_names
+
     def GetName(self):
         return self.name
+
 # Class for storing all information about an album
 

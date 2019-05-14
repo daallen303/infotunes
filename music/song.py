@@ -2,12 +2,10 @@ from .audioinfo import Key
 
 class Song:
 
-    def __init__(self, track, sp):
-        self.id = track['id']
-        self.name = track['name']
-        self.sp = sp
+    def __init__(self, name, uri, audio_features):
+        self.uri = uri
+        self.name = name
         
-        audio_features = sp.audio_features(track['id'])
         self.acousticness = audio_features[0]['acousticness']
         self.key = audio_features[0]['key']
         self.danceability= audio_features[0]['danceability']
@@ -17,6 +15,8 @@ class Song:
 
     def GetKey(self):
         return Key(self.key).name
+    def GetDanceability(self):
+        return self.danceability
         
 
 #Class for storing all information about a song

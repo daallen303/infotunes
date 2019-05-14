@@ -1,5 +1,10 @@
+import sys
+
 import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials  
+import spotipy.util as util
+import simplejson as json
+from spotipy.oauth2 import SpotifyClientCredentials 
+from spotipy.oauth2 import SpotifyOAuth
 from enum import Enum
 
 class Key(Enum):
@@ -108,6 +113,7 @@ class User:
         for n in range(len(playlist_info['items'])):
             self.playlists.append(Playlist(playlist_info['items'][n]))
 
+
 # Class for storing info on a user
 
 def GetCertified(client_id, client_secret):
@@ -118,6 +124,7 @@ def GetCertified(client_id, client_secret):
 
 client_id = "e2e1e1eca1bf4883a109f3d4a30b3400"
 client_secret = "ba975017397d4b13aad38f876b5b99ad"
+redirect_uri = "https://localhost/"
 sp = GetCertified(client_id, client_secret);
 
 
@@ -134,7 +141,39 @@ for name in artist.album_names:
     albums.append(Album(name, artist.album_uris[count]))
     print("Album: ",name)
     albums[count].PrintAlbumInfo()
-    count+=1"""
+    count+=1
 user_name = User("daallen-us")
-sp.search(user_name)
+sp.search(user_name)"""
 
+if len(sys.argv) > 1:
+    username = sys.argv[1]
+else:
+    print("Usage: %s username" % (sys.argv[0],))
+    sys.exit()
+
+scope = 'playlist-read-collaborative'
+token = util.prompt_for_user_token(username, scope, client_id, client_secret, redirect_uri)
+auth = SpotifyOAuth(client_id, client_secret, redirect_uri )
+
+if token:
+    sp.trace = False
+    ranges = ['short_term','meduim_term', 'long_term']
+    for range in ranges:
+        print("range:", range)
+        results = sp.current_user_playlists()
+        #for i, item in enumerate(results['item']):
+         #   print(i, item['name'])
+          #  print()
+else:
+    print("Can't get token for", username)
+
+
+
+
+
+
+
+
+
+
+top_artists = sp.current_user_top_artists(limit=10,offset=0, time_range='medium_term')
