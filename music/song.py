@@ -1,10 +1,16 @@
 from .audioinfo import Key
+#from .audioinfo import mode
 
 class Song:
 
-    def __init__(self, name, uri, audio_features, audio_analysis):
-        self.uri = uri
-        self.name = name
+    def __init__(self, track, audio_features, audio_analysis):
+        self.uri = track['uri']
+        self.name = track['name']
+        #self.popularity = track['popularity']
+        self.track_number = track['track_number']
+        self.preview_url = track['preview_url']
+        #self.disk_number = track['disk_number']
+        #self.album_name = track['album']['name']
         
         # audio features 
         af = audio_features[0]
@@ -20,7 +26,6 @@ class Song:
         self.speechiness = af['speechiness'] # 0-1
         self.energy = af['energy'] # 0-1
         self.acousticness = af['acousticness'] # 0-1
-        self.energy = af['energy'] # 0-1
         self.instrumentalness = af['instrumentalness'] # 0-1
         self.liveness = af['liveness'] # 0-1
         # audio_analysis

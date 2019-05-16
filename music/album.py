@@ -2,16 +2,20 @@ from .song import Song
 
 class Album:
 
-    def __init__(self, uri, name):
+    def __init__(self, album, songs):
         
-        self.uri = uri
-        self.name = name
-        self.song_names = []
-        self.song_uris = []
+        self.uri = album['uri']
+        self.name = album['name']
+        self.songs = songs
+        self.album_type = album['album_type']
+        self.artist = album['artists'][0]['name']
+        self.release_date = album['release_date']
+        self.release_date_precision = album['release_date_precision']
+        #self.genres = album['genres']
+        self.images = album['images']
+        #self.popularity = album['popularity']
+
         
-    def SetSongs(self, song_names, song_uris):
-        self.song_names = song_names
-        self.song_uris = song_uris
 
     def GetSongNames(self):
         return self.song_names
