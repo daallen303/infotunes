@@ -12,5 +12,4 @@ class User:
         for n in range(len(playlist_info['items'])):
             self.playlists.append(Playlist(playlist_info['items'][n]))
 
-
 # Class for storing info on a user
