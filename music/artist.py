@@ -2,14 +2,15 @@ from .album import Album
 
 class Artist:
     
-    def __init__(self, name, uri):
-        self.name = name
-        self.uri = uri
-        #genres
-        #similar artist
-        #popularity
-        #First album release date
-        #Last album release date
+    def __init__(self, artist, albums):
+        self.name = artist['name']
+        self.uri = artist['uri']
+        self.albums = albums
+        self.genres = artist['genres']
+        #self.similar_artist = artist['similar_artist']
+        self.popularity = artist['popularity']
+        self.first_release = albums[0].release_date
+        self.last_release = albums[-1].release_date
     
     def SetAlbums(self, album_names, album_uris):
         #store artists albums and album_names in seperate lists
