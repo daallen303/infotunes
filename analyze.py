@@ -44,7 +44,7 @@ def GetAlbum(in_album):
     return album
 
 def GetArtist(artist):
-    sp_albums = sp.artist_albums(artist['uri'])
+    sp_albums = sp.artist_albums(artist['uri'], limit=50)
     albums = []
     album_names = []
     for i in range(len(sp_albums['items'])):
@@ -81,7 +81,7 @@ def GetAverage(songs, name):
     return average_song
 
 #Graph.AlbumPopularityOverTime()
-name = "Bob Dylan"
+name = input("Enter a band name:\n")
 result = sp.search(name, limit=1, type='artist')
 artist = GetArtist(result['artists']['items'][0])
 Graph.AlbumPopularityOverTime(artist)

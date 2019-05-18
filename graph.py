@@ -3,8 +3,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from math import pi
 import pandas as pd
-#import plotly.plotly as py
-#import plotly.graph_objs as go
+import plotly as py
+import plotly.graph_objs as go
+
+py.tools.set_credentials_file(username='daallen303', api_key='2ziGQf8CeGbtEZQdisEI') 
 
 class Graph:
 
@@ -124,23 +126,36 @@ class Graph:
     @staticmethod
     def AlbumPopularityOverTime(artist):
         
-        x = []
-        y = []
-        z = []
+        years = []
+        counts = []
+        pops = []
+        album_info = []
 
         for album in artist.albums:
             # year
+            print(album.genres)
             year = int(album.release_date[:4],10)
-            x.append(year)
+            print(year)
+            years.append(year)
             
-            y.append(album.song_count)
+            counts.append(album.song_count)
             # album popularity
-            z.append(album.popularity)
-
-
-        plt.axis([min(x)-2,max(x)+2,0, max(y)+2])
-        plt.ylabel('Number of Songs')
-        plt.xlabel('Year released')
+            pops.append(album.popularity)
+            album_info.append("<b><i><a href='https::/localhost'>"+album.name+"</a></i></b><br><b>Recorded in:</b> "+album.release_date+"<br><b>Popularity</b>: "+str(album.popularity))
+        
+        #plt.axis([min(x)-2,max(x)+2,0, max(y)+2])
+        trace0 = go.Scatter(
+                x = years,
+                y = counts,
+                mode='markers',
+                marker=dict(size=pops),
+                text=album_info
+                )
+        data = [trace0]
+        py.plotly.iplot(data, filename=artist.name+" albums over time")
+        #plt.title(artist.name+" albums over time")
+        #plt.ylabel('Number of Songs')
+        #plt.xlabel('Year released')
         #use the scatter function
-        plt.scatter(x, y, s=z*100)
-        plt.show()
+        #plt.scatter(x, y, s=z*100)
+        #plt.show()
