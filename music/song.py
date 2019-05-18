@@ -7,7 +7,7 @@ class Song:
         if track is not None:
             self.uri = track['uri']
             self.name = track['name']
-            #self.popularity = track['popularity']
+            self.popularity = track['popularity']
             self.track_number = track['track_number']
             self.preview_url = track['preview_url']
             #self.disk_number = track['disk_number']

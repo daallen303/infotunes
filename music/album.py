@@ -2,8 +2,8 @@ from .song import Song
 
 class Album:
 
-    def __init__(self, album, songs):
-        
+    def __init__(self, album, songs, song_count):
+       
         self.uri = album['uri']
         self.name = album['name']
         self.songs = songs
@@ -11,9 +11,10 @@ class Album:
         self.artist = album['artists'][0]['name']
         self.release_date = album['release_date']
         self.release_date_precision = album['release_date_precision']
-        #self.genres = album['genres']
+        self.genres = album['genres']
         self.images = album['images']
-        #self.popularity = album['popularity']
+        self.popularity = album['popularity']
+        self.song_count = song_count
 
         
 
