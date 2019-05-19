@@ -15,8 +15,8 @@ def ConvertSearch(name):
            name[i] == '+'
     return name
 
-def GetSong(track):   
-    track_uri = track['uri']
+def GetSong(track_uri):   
+    track = sp.track(track_uri) 
     audio_analysis = sp.audio_analysis(track_uri)
     audio_features = sp.audio_features(track_uri)
     song = Song(track, audio_features, audio_analysis)
@@ -26,20 +26,12 @@ def GetAlbum(in_album):
     
     tracks = sp.album_tracks(in_album['uri'])
     sp_album = sp.album(in_album['uri'])
+    songs = [] 
 
-    songs = []
-    threads = []
-    que = queue.Queue()
-    """print(len(tracks['items']))
-    for i in range(len(tracks['items'])):
-        track = tracks['items'][i]
-        t = threading.Thread(target=lambda q, arg1: q.put(GetSong(track)), args=(que,track,))
-        threads.append(t)
-        t.start()
-        songs.append(GetSong(track))
-    for t in threads:
-        t.join()
-        songs.append(que.get())"""
+    #for i in range(len(tracks['items'])):
+    #    songs.append(GetSong(tracks['items'][i]['uri']))
+    #songs = []
+    #threads = []
     album = Album(sp_album, songs, len(tracks['items']))
     return album
 
@@ -100,3 +92,15 @@ Graph.AlbumPopularityOverTime(artist)
 #GraphSongFeatures(average)
 #for song in album.songs:
 #    print(song.name)
+    
+    
+"""print(len(tracks['items']))
+for i in range(len(tracks['items'])):
+    track = tracks['items'][i]
+    t = threading.Thread(target=lambda q, arg1: q.put(GetSong(track)), args=(que,track,))
+    threads.append(t)
+    t.start()
+    songs.append(GetSong(track))
+for t in threads:
+    t.join()
+    songs.append(que.get())"""
