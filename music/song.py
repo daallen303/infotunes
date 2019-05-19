@@ -10,8 +10,11 @@ class Song:
             self.popularity = track['popularity']
             self.track_number = track['track_number']
             self.preview_url = track['preview_url']
+            self.release_date = track['album']['release_date']
             #self.disk_number = track['disk_number']
-            #self.album_name = track['album']['name']
+            self.artist_name = track['artists'][0]['name']
+            self.album_name = track['album']['name']
+            self.track_number = track['track_number']
             
             # audio features 
             af = audio_features[0]

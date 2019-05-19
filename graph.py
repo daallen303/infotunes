@@ -145,13 +145,13 @@ class Graph:
             album_info.append("<b><i>"+album.name+"</i></b><br><b>Recorded in:</b> "+
                     album.release_date+"<br><b>Popularity</b>: "+str(album.popularity))
             if album.popularity < 10 and album.popularity > 0:
-                album_color.append('rgb(0,0,0)')
+                album_color.append('#D3B073')
             elif album.popularity < 30 and album.popularity > 10:
-                album_color.append('rgb(40,40,40)')
+                album_color.append('#A6A27A')
             elif album.popularity < 50 and album.popularity > 30:
-                album_color.append('rgb(80,80,80)')
+                album_color.append('#3E4D56')
             elif album.popularity < 80 and album.popularity > 50:
-                album_color.append('rgb(100,100,100)')
+                album_color.append('#99BE0B')
             else:
                 album_color.append('red')
         
@@ -167,14 +167,16 @@ class Graph:
                 text=album_info,
                 )
         layout = go.Layout(
-                title=artist.name+" albums over time",
-                legend=dict(x=-.1, y=1.2),
+                title=dict(text = artist.name+" albums over time",
+                            font = dict( size = 18,
+                                color = 'white')),
+                hovermode='closest',
                 xaxis=dict(
                     title = "Release Date",
                     gridcolor = 'rgb(255,255,255)',
                     color='rgb(255,255,255)',
                     zerolinewidth = 1,
-                    ticklen = 5,
+                    ticklen = 0,
                     gridwidth = 2
                 ),
                 yaxis=dict(
@@ -182,18 +184,78 @@ class Graph:
                     gridcolor='rgb(255,255,255)',
                     color='rgb(255,255,255)',
                     zerolinewidth=1,
-                    ticklen=5,
+                    ticklen=0,
                     gridwidth=2,
                 ),
-                paper_bgcolor='rgb(125,125,125)',
-                plot_bgcolor='rgb(125,125,125)'
+                paper_bgcolor='rgb(60,60,60)',
+                plot_bgcolor='rgb(60,60,60)'
             )
         data = [trace0]
         fig = go.Figure(data=data, layout=layout)
-        py.plotly.iplot(fig, filename=artist.name+" albums over time")
+        py.plotly.plot(fig, filename=artist.name+" albums over time")
         #plt.title(artist.name+" albums over time")
         #plt.ylabel('Number of Songs')
         #plt.xlabel('Year released')
         #use the scatter function
         #plt.scatter(x, y, s=z*100)
         #plt.show()
+
+
+
+    @staticmethod
+    def GraphPlaylist(songs, name):
+        
+        years = []
+        nums = []
+        pops = []
+        song_info = []
+
+        for song in songs:
+            # year
+            year = int(song.release_date[:4],10)
+            print(year)
+            years.append(year)
+            
+            nums.append(song.track_number)
+            # song popularity
+            pops.append(song.popularity)
+            song_info.append("<b><i>"+song.artist_name+":</i></b> "+song.name+"<br><b>Recorded in:</b> "+
+                    song.release_date+"<br><b>Popularity</b>: "+str(song.popularity))
+        
+        #plt.axis([min(x)-2,max(x)+2,0, max(y)+2])
+        trace0 = go.Scatter(
+                x = years,
+                y = nums,
+                mode='markers',
+                marker=dict(
+                    size=pops,
+                    ),
+                text=song_info,
+                )
+        layout = go.Layout(
+                title=dict( text = name+" songs",
+                            font=dict( size = 18,
+                            color = 'rgb(255,255,255)')),
+                hovermode='closest',
+                xaxis=dict(
+                    title = "Release Date",
+                    gridcolor = 'rgb(255,255,255)',
+                    color='rgb(255,255,255)',
+                    zerolinewidth = 1,
+                    ticklen = 0,
+                    gridwidth = 2
+                ),
+                yaxis=dict(
+                    title='Track number in album',
+                    gridcolor='rgb(255,255,255)',
+                    color='rgb(255,255,255)',
+                    zerolinewidth=1,
+                    ticklen=0,
+                    gridwidth=2,
+                ),
+                paper_bgcolor='rgb(60,60,60)',
+                plot_bgcolor='rgb(60,60,60)'
+            )
+        data = [trace0]
+        fig = go.Figure(data=data, layout=layout)
+        py.plotly.plot(fig, filename=name)

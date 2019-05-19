@@ -5,6 +5,10 @@ from music.artist import Artist
 from credentials import SpotifyManager 
 import threading
 import queue
+import spotipy.util as util
+import spotipy
+import sys
+import time 
 
 spotify_manager = SpotifyManager()
 sp = spotify_manager.GetCertified()
@@ -16,7 +20,7 @@ def ConvertSearch(name):
     return name
 
 def GetSong(track_uri):   
-    track = sp.track(track_uri) 
+    track = sp.track(track_uri)
     audio_analysis = sp.audio_analysis(track_uri)
     audio_features = sp.audio_features(track_uri)
     song = Song(track, audio_features, audio_analysis)
@@ -36,7 +40,7 @@ def GetAlbum(in_album):
     return album
 
 def GetArtist(artist):
-    sp_albums = sp.artist_albums(artist['uri'], limit=50)
+    sp_albums = sp.artist_albums(artist['uri'], limit=10)
     albums = []
     album_names = []
     for i in range(len(sp_albums['items'])):
@@ -72,35 +76,34 @@ def GetAverage(songs, name):
     average_song.SetFeatures("Average "+ name, danceability, speechiness, energy, acousticness, instrumentalness, liveness)
     return average_song
 
-#Graph.AlbumPopularityOverTime()
-name = input("Enter a band name:\n")
-result = sp.search(name, limit=1, type='artist')
-artist = GetArtist(result['artists']['items'][0])
-Graph.AlbumPopularityOverTime(artist)
+def GetPlaylist():
+    if len(sys.argv) > 1:
+        username = sys.argv[1]
+    else:
+        print("Usage: %s username " % (sys.argv[0],))
+        sys.exit()
 
+    scope = 'playlist-modify-public user-read-email'
+    token = util.prompt_for_user_token(username, scope)
 
-#Graph.RadarPlot(song)
-#song = GetSong(result['tracks']['items'][0])
-#Graph.GraphSongFeatures(song)
-#print(result['artists']['items'][0]['name'])
-#average = GetAllSongsFromArtist(artist)
-#GraphSongFeatures(average)
-#sp_album = result['albums']['items'][0]
-#album = GetAlbum(sp_album)
-#GraphKey(album.songs)
-#average = GetAverage(album.songs, album.name)
-#GraphSongFeatures(average)
-#for song in album.songs:
-#    print(song.name)
-    
-    
-"""print(len(tracks['items']))
-for i in range(len(tracks['items'])):
-    track = tracks['items'][i]
-    t = threading.Thread(target=lambda q, arg1: q.put(GetSong(track)), args=(que,track,))
-    threads.append(t)
-    t.start()
-    songs.append(GetSong(track))
-for t in threads:
-    t.join()
-    songs.append(que.get())"""
+    if token:
+        spot = spotipy.Spotify(auth=token)
+        spot.trace = False
+        playlist = spot.user_playlists(username)
+        songs = []
+        for i in range(0,4):
+            tracks = sp.user_playlist_tracks(username, playlist_id='spotify:playlist:3scjzNJ1Akyzsc4rPwGZtT', limit = 1, offset=i)
+            print(range(len(tracks['items'])))
+            for i in range(len(tracks['items'])):
+                songs.append(GetSong(tracks['items'][i]['track']['uri']))
+        Graph.GraphPlaylist(songs, playlist['items'][1]['name'])
+    else:
+        print("Can't get token for", username)
+start = time.time()
+GetPlaylist()
+end = time.time()
+print("Program took "+str(end-start)+" seconds")
+#name = input("Enter a band name:\n")
+#result = sp.search(name, limit=1, type='artist')
+#artist = GetArtist(result['artists']['items'][0])
+#Graph.AlbumPopularityOverTime(artist)
