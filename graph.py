@@ -162,7 +162,7 @@ class Graph:
                 mode='markers',
                 marker=dict(
                     size=pops,
-                    color=album_color
+                    color='#3E4D56'
                     ),
                 text=album_info,
                 )

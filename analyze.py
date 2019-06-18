@@ -3,8 +3,6 @@ from music.album import Album
 from music.song import Song
 from music.artist import Artist
 from credentials import SpotifyManager 
-import threading
-import queue
 import spotipy.util as util
 import spotipy
 import sys
@@ -20,27 +18,39 @@ def ConvertSearch(name):
     return name
 
 def GetSong(track_uri):   
-    track = sp.track(track_uri)
+    name = input("Enter the song's name \n")
+    # Also have a thing to enter the artists name
+    result = sp.search(q='song:'+name, type='track') 
+    track = sp.track(result['track']['items'][0])
     audio_analysis = sp.audio_analysis(track_uri)
     audio_features = sp.audio_features(track_uri)
     song = Song(track, audio_features, audio_analysis)
     return song
 
-def GetAlbum(in_album):
-    
-    tracks = sp.album_tracks(in_album['uri'])
-    sp_album = sp.album(in_album['uri'])
-    songs = [] 
+def GraphSong():
+    print("graph song function calls")
 
-    #for i in range(len(tracks['items'])):
-    #    songs.append(GetSong(tracks['items'][i]['uri']))
-    #songs = []
-    #threads = []
+def GetAlbum(album=None):
+    if album == None:
+        name = input("Enter the album's name\n")
+        result = sp.search(q='album:'+ name, type='album')
+        album = result['albums']['items'][0] 
+    tracks = sp.album_tracks(album['uri'])
+    sp_album = sp.album(album['uri'])
+    songs = [] 
     album = Album(sp_album, songs, len(tracks['items']))
     return album
 
-def GetArtist(artist):
-    sp_albums = sp.artist_albums(artist['uri'], limit=10)
+def GraphAlbum():
+    print("graph song function calls")
+
+def GetArtist():
+    name = input("Enter the artist's name\n")
+    result = sp.search(q='artist:' + name, type='artist')
+    print(result)
+    artist = result['artists']['items'][0]
+    print(artist)
+    sp_albums = sp.artist_albums(artist['uri'], limit=50)
     albums = []
     album_names = []
     for i in range(len(sp_albums['items'])):
@@ -49,6 +59,10 @@ def GetArtist(artist):
             album_names.append(sp_albums['items'][i]['name'])
     return Artist(artist, albums) 
 
+def GraphArtist():
+    print("graph artist") 
+    
+    
 def GetAllSongsFromArtist(artist):
     songs = []
     for i in len(artist.albums):
@@ -99,11 +113,30 @@ def GetPlaylist():
         Graph.GraphPlaylist(songs, playlist['items'][1]['name'])
     else:
         print("Can't get token for", username)
-start = time.time()
-GetPlaylist()
-end = time.time()
-print("Program took "+str(end-start)+" seconds")
-#name = input("Enter a band name:\n")
-#result = sp.search(name, limit=1, type='artist')
-#artist = GetArtist(result['artists']['items'][0])
-#Graph.AlbumPopularityOverTime(artist)
+
+def GraphPlaylist():
+    print("graph playlist")
+
+print("\n\nWelcome to InfoTunes \nWhat would you like information about? \n") 
+option = input("Type 'a' for artist, 's' for song, 'al' for album, 'p' for playlist, 'q' to quit and exit \n")
+
+
+while option != 'q':
+    if option == 'a':
+        GetArtist()
+    elif option == 's':
+        GetSong()
+    elif option == 'al':
+        GetAlbum()
+    elif option == 'p':
+        GetPLaylist()
+    else:
+        print("Value not understood, please enter a valid value")
+        
+    option = input("Type 'a' for artist, 's' for song, 'al' for album, 'p' for playlist, 'q' to quit and exit \n")
+
+
+
+
+
+
