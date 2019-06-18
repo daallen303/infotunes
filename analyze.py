@@ -17,13 +17,16 @@ def ConvertSearch(name):
            name[i] == '+'
     return name
 
-def GetSong(track_uri):   
-    name = input("Enter the song's name \n")
-    # Also have a thing to enter the artists name
-    result = sp.search(q='song:'+name, type='track') 
-    track = sp.track(result['track']['items'][0])
-    audio_analysis = sp.audio_analysis(track_uri)
-    audio_features = sp.audio_features(track_uri)
+def GetSong(track_uri=None):   
+    if track_uri == None:
+        name = input("Enter the song's name \n")
+        # Also have a thing to enter the artists name
+        result = sp.search(q='song:'+name, type='track')
+        print(result)
+        track = sp.track(result['tracks']['items'][0]['uri'])
+        print(track)
+    audio_analysis = sp.audio_analysis(track['uri'])
+    audio_features = sp.audio_features(track['uri'])
     song = Song(track, audio_features, audio_analysis)
     return song
 
@@ -90,29 +93,28 @@ def GetAverage(songs, name):
     average_song.SetFeatures("Average "+ name, danceability, speechiness, energy, acousticness, instrumentalness, liveness)
     return average_song
 
-def GetPlaylist():
-    if len(sys.argv) > 1:
-        username = sys.argv[1]
-    else:
-        print("Usage: %s username " % (sys.argv[0],))
-        sys.exit()
-
+def GetUser():
+    username = input("Please enter your username\n")
     scope = 'playlist-modify-public user-read-email'
     token = util.prompt_for_user_token(username, scope)
 
     if token:
         spot = spotipy.Spotify(auth=token)
         spot.trace = False
-        playlist = spot.user_playlists(username)
-        songs = []
-        for i in range(0,4):
-            tracks = sp.user_playlist_tracks(username, playlist_id='spotify:playlist:3scjzNJ1Akyzsc4rPwGZtT', limit = 1, offset=i)
-            print(range(len(tracks['items'])))
-            for i in range(len(tracks['items'])):
-                songs.append(GetSong(tracks['items'][i]['track']['uri']))
-        Graph.GraphPlaylist(songs, playlist['items'][1]['name'])
+       # playlist = spot.user_playlists(username)
+       # songs = []
+       # for i in range(0,4):
+       #     tracks = sp.user_playlist_tracks(username, playlist_id='spotify:playlist:3scjzNJ1Akyzsc4rPwGZtT', limit = 1, offset=i)
+       #     print(range(len(tracks['items'])))
+       #     for i in range(len(tracks['items'])):
+       #         songs.append(GetSong(tracks['items'][i]['track']['uri']))
     else:
         print("Can't get token for", username)
+
+def GetPlaylist():
+    name = input("Please input the playlists name\n")
+    result = sp.search(q='playlist:' + name, type='playlist')
+    print(result['playlists']['items'][0]['uri'])
 
 def GraphPlaylist():
     print("graph playlist")
@@ -129,7 +131,9 @@ while option != 'q':
     elif option == 'al':
         GetAlbum()
     elif option == 'p':
-        GetPLaylist()
+        GetPlaylist()
+    elif option == 'u':
+        GetUser()
     else:
         print("Value not understood, please enter a valid value")
         
