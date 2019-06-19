@@ -11,7 +11,7 @@ py.tools.set_credentials_file(username='daallen303', api_key='2ziGQf8CeGbtEZQdis
 class Graph:
 
     @staticmethod
-    def SongFeatures(song):
+    def AudioFeaturesBarGraph(song):
         
         labels = ('danceability', 'speechiness', 'acousticness','energy', 'instrumentalness', 'liveness')
         y_pos = np.arange(len(labels))
@@ -27,7 +27,7 @@ class Graph:
     #need to add Mode as well so it shows if the song is minor or major
     #also need to make it more optimal
     @staticmethod
-    def Key(songs):
+    def AlbumKeys(songs):
         C=Db=D=Eb=E=F=Gb=G=Ab=A=Bb=B=0
         for song in songs:
             if song.key == 0:
@@ -68,17 +68,16 @@ class Graph:
                 del labels[i-count]
                 del colors[i-count]
                 count+=1
-        print(len(sizes))
-        explode = (0,0.1,0,0,0,0)
+        #explode = (0,0.1,0,0,0,0)
         plt.title("Song Keys for the Lumineers Cleopatra")    
-        plt.pie(sizes, labels=labels, explode=explode, colors=colors, autopct='%1.1f%%')
+        plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%')
         
         plt.axis('equal')
         plt.show()
 
     # Fix to more accurately represent a song
     @staticmethod
-    def RadarPlot(song):
+    def AudioFeaturesRadarPlot(song):
        # Set data
        df = pd.DataFrame({
            'Tempo': [song.tempo],
@@ -92,13 +91,11 @@ class Graph:
        # number of variable
        categories=list(df)[:]
        N = len(categories)
-       print(categories)
        
        # We are going to plot the first line of the data frame.
        # But we need to repeat the first value to close the circular graph:
        values=df.loc[0].values.flatten().tolist()
        values += values[:1]
-       print(values)
          
        # What will be the angle of each axis in the plot? (we divide the plot / number of variable)
        angles = [n / float(N) * 2 * pi for n in range(N)]
@@ -136,7 +133,6 @@ class Graph:
         for album in artist.albums:
             # year
             year = int(album.release_date[:4],10)
-            print(year)
             years.append(year)
             
             counts.append(album.song_count)
@@ -191,7 +187,7 @@ class Graph:
                 plot_bgcolor='rgb(60,60,60)'
             )
         data = [trace0]
-        fig = go.Figure(data=data, layout=layout)
+        fig = go.Figure(data=data, layout=layout) 
         py.plotly.plot(fig, filename=artist.name+" albums over time")
         #plt.title(artist.name+" albums over time")
         #plt.ylabel('Number of Songs')

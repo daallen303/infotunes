@@ -37,7 +37,7 @@ class Song:
             and a lot of other more in depth knowledge not needed currently"""
 
     #constructor for song that takes in average values of a group of songs
-    def SetFeatures(self, name, danceability, speechiness, energy, acousticness, instrumentalness, liveness):
+    def SetFeatures(self, name, danceability, speechiness, energy, acousticness, instrumentalness, liveness, tempo, popularity, valence, loudness, duration_ms):
         self.name = name
         self.danceability= danceability # 0-1
         self.speechiness = speechiness # 0-1
@@ -45,6 +45,11 @@ class Song:
         self.acousticness = acousticness # 0-1
         self.instrumentalness = instrumentalness # 0-1
         self.liveness = liveness # 0-1
+        self.tempo = tempo # in bpm
+        self.popularity = popularity # 0-100
+        self.valence = valence 
+        self.loudness = loudness # in db
+        self.duration_ms = duration_ms # in ms
 
     def GetName(self):
         return self.name
