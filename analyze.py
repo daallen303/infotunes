@@ -3,6 +3,7 @@ from music.album import Album
 from music.song import Song
 from music.artist import Artist
 from credentials import SpotifyManager 
+from prettytable import PrettyTable
 import spotipy.util as util
 import spotipy
 import sys
@@ -10,12 +11,6 @@ import time
 
 spotify_manager = SpotifyManager()
 sp = spotify_manager.GetCertified()
-
-def ConvertSearch(name):
-    for i in range(len(name)):
-        if name[i] == ' ':
-           name[i] == '+'
-    return name
 
 def GetSong(track_uri=None):   
     if track_uri == None:
@@ -63,6 +58,7 @@ def GraphAlbum(album):
     Graph.AudioFeaturesBarGraph(average_song)
 
 def GetArtist():
+    # Add top tracks info
     name = input("Enter the artist's name\n")
     print("Generating information about " + name)
     result = sp.search(q='artist:' + name, type='artist')
@@ -122,21 +118,29 @@ def GetAverageSong(songs, name):
 
 def GetUser():
     username = input("Please enter your username\n")
-    scope = 'playlist-modify-public user-read-email'
+    scope = 'playlist-modify-public user-read-email user-top-read user-library-read'
     token = util.prompt_for_user_token(username, scope)
 
     if token:
         spot = spotipy.Spotify(auth=token)
         spot.trace = False
-       # playlist = spot.user_playlists(username)
-       # songs = []
-       # for i in range(0,4):
-       #     tracks = sp.user_playlist_tracks(username, playlist_id='spotify:playlist:3scjzNJ1Akyzsc4rPwGZtT', limit = 1, offset=i)
-       #     print(range(len(tracks['items'])))
-       #     for i in range(len(tracks['items'])):
-       #         songs.append(GetSong(tracks['items'][i]['track']['uri']))
+        #saved_tracks = sp.current_user_saved_tracks()
+        #print(saved_tracks)
+        lr_top_artists = []
+        lr_top_artists = spot.current_user_top_artists(limit=20, time_range='long_term')
+        mr_top_artists = [] 
+        mr_top_artists = spot.current_user_top_artists(limit=20, time_range='medium_term')
+        sr_top_artists = []
+        sr_top_artists = spot.current_user_top_artists(limit=20, time_range='short_term')
+        
+        t = PrettyTable(["Spot", "All-time", "Medium-range", "Short-range"])
+        for i in range(len(lr_top_artists['items'])):
+            t.add_row([str(i+1),lr_top_artists['items'][i]['name'], mr_top_artists['items'][i]['name'], sr_top_artists['items'][i]['name']])
+        print(t)
     else:
         print("Can't get token for", username)
+def GraphUser():
+    print("hello")
 
 def GetPlaylist():
     name = input("Please input the playlists name\n")
@@ -147,7 +151,7 @@ def GraphPlaylist(songs):
     Graph.GraphPlaylist(songs)
 
 print("\n\nWelcome to InfoTunes \nWhat would you like information about? \n") 
-option = input("Type 'a' for artist, 's' for song, 'al' for album, 'p' for playlist, 'q' to quit and exit \n")
+option = input("Type 'u' for user, 'a' for artist, 's' for song, 'al' for album, 'p' for playlist, 'q' to quit and exit \n")
 
 
 while option != 'q':
@@ -165,7 +169,7 @@ while option != 'q':
         GraphPlaylist(playlist.songs)
     elif option == 'u':
         user = GetUser()
-        GraphUser(user)
+        GraphUser()
     else:
         print("Value not understood, please enter a valid value") 
     option = input("Type 'a' for artist, 's' for song, 'al' for album, 'p' for playlist, 'q' to quit and exit \n")
