@@ -136,7 +136,23 @@ def GetUser():
         t = PrettyTable(["Spot", "All-time", "Medium-range", "Short-range"])
         for i in range(len(lr_top_artists['items'])):
             t.add_row([str(i+1),lr_top_artists['items'][i]['name'], mr_top_artists['items'][i]['name'], sr_top_artists['items'][i]['name']])
+        t.align = 'l'
+        t.align["Spot"] = 'r'
         print(t)
+
+        lr_top_tracks = []
+        lr_top_tracks = spot.current_user_top_tracks(limit=20, time_range='long_term')
+        mr_top_tracks = [] 
+        mr_top_tracks = spot.current_user_top_tracks(limit=20, time_range='medium_term')
+        sr_top_tracks = []
+        sr_top_tracks = spot.current_user_top_tracks(limit=20, time_range='short_term')
+        
+        t2 = PrettyTable(["Spot", "All-time", "Medium-range", "Short-range"])
+        for i in range(len(lr_top_tracks['items'])):
+            t2.add_row([str(i+1),lr_top_tracks['items'][i]['name'], mr_top_tracks['items'][i]['name'], sr_top_tracks['items'][i]['name']])
+        t2.align = 'l'
+        t2.align["Spot"] = 'r'
+        print(t2)
     else:
         print("Can't get token for", username)
 def GraphUser():
