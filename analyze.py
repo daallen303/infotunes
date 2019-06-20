@@ -19,12 +19,13 @@ def ConvertSearch(name):
 
 def GetSong(track_uri=None):   
     if track_uri == None:
-        name = input("Enter the song's name \n")
+        song_name = input("Enter the song's name \n")
+        artist_name = input("Enter the artist's name \n")
         # Also have a thing to enter the artists name
-        result = sp.search(q='song:'+name, type='track')
-        print(result)
+        query =  "artist:%"+artist_name+" track:%"+song_name
+        result = sp.search(q=query, type='track')
+        print("Getting Information about "+song_name)
         track = sp.track(result['tracks']['items'][0]['uri'])
-        print(track)
     else:
         track = sp.track(track_uri)
     audio_analysis = sp.audio_analysis(track['uri'])
@@ -39,14 +40,16 @@ def GraphSong(song):
 
 def GetAlbum(album=None, full_info=False):
     if album == None:
-        name = input("Enter the album's name\n")
-        result = sp.search(q='album:'+ name, type='album')
+        album_name = input("Enter the album's name\n")
+        artist_name = input("Enter the artist's name\n")
+        query = "artist:%"+artist_name+" album:%"+album_name
+        result = sp.search(q=query, type='album')
         album = result['albums']['items'][0] 
     tracks = sp.album_tracks(album['uri'])
     sp_album = sp.album(album['uri'])
     songs = []
     if full_info == True:
-        print("Getting Information about the songs in "+name)
+        print("Getting Information about the songs in "+album_name)
         for i in range(2):
             songs.append(GetSong(tracks['items'][i]['uri']))
             print(songs[i].name)
@@ -140,8 +143,8 @@ def GetPlaylist():
     result = sp.search(q='playlist:' + name, type='playlist')
     print(result['playlists']['items'][0]['uri'])
 
-def GraphPlaylist():
-    print("graph playlist")
+def GraphPlaylist(songs):
+    Graph.GraphPlaylist(songs)
 
 print("\n\nWelcome to InfoTunes \nWhat would you like information about? \n") 
 option = input("Type 'a' for artist, 's' for song, 'al' for album, 'p' for playlist, 'q' to quit and exit \n")
@@ -159,13 +162,12 @@ while option != 'q':
         GraphAlbum(album)
     elif option == 'p':
         playlist = GetPlaylist()
-        GraphPlaylist(playlist)
+        GraphPlaylist(playlist.songs)
     elif option == 'u':
         user = GetUser()
         GraphUser(user)
     else:
-        print("Value not understood, please enter a valid value")
-        
+        print("Value not understood, please enter a valid value") 
     option = input("Type 'a' for artist, 's' for song, 'al' for album, 'p' for playlist, 'q' to quit and exit \n")
 
 
