@@ -12,6 +12,19 @@ import time
 spotify_manager = SpotifyManager()
 sp = spotify_manager.GetCertified()
 
+class TopArtist:
+    def __init__(self, name, lr_spot):
+        self.name = name 
+        self.lr_spot = lr_spot
+        self.mr_spot = -1
+        self.sr_spot = -1
+
+    def SetMrSpot(self, mr_spot):
+        self.mr_spot = mr_spot
+
+    def SetSrSpot(self, sr_spot):
+        self.sr_spot = sr_spot
+
 def GetSong(track_uri=None):   
     if track_uri == None:
         song_name = input("Enter the song's name \n")
@@ -138,9 +151,52 @@ def GetUser():
         sr_top_artists = []
         sr_top_artists = spot.current_user_top_artists(limit=20, time_range='short_term')
         
+        all_top_artists = []
+        all_top_artists_uri = []
+        
         t = PrettyTable(["Spot", "All-time", "Medium-range", "Short-range"])
         for i in range(len(lr_top_artists['items'])):
-            t.add_row([str(i+1),lr_top_artists['items'][i]['name'], mr_top_artists['items'][i]['name'], sr_top_artists['items'][i]['name']])
+            all_top_artists.append(TopArtist(lr_top_artists['items'][i]['name'],i))
+            all_top_artists_uri.append(lr_top_artists['items'][i]['uri'])
+        for i in range(len(lr_top_artists['items'])):
+            if mr_top_artists['items'][i]['uri'] in all_top_artists_uri:
+                all_top_artists[all_top_artists_uri.index(mr_top_artists['items'][i]['uri'])].SetMrSpot(i)
+            else:
+                all_top_artists_uri.append(mr_top_artists['items'][i]['uri'])
+                all_top_artists.append(TopArtist(mr_top_artists['items'][i]['name'], -1))
+                all_top_artists[-1].SetMrSpot(i)
+            if sr_top_artists['items'][i]['uri'] in all_top_artists_uri:
+                all_top_artists[all_top_artists_uri.index(sr_top_artists['items'][i]['uri'])].SetSrSpot(i)
+            else:
+                all_top_artists_uri.append(sr_top_artists['items'][i]['uri'])
+                all_top_artists.append(TopArtist(sr_top_artists['items'][i]['name'], -1))
+                all_top_artists[-1].SetSrSpot(i)
+            
+        for i in range(20):
+            lr_index = all_top_artists_uri.index(lr_top_artists['items'][i]['uri'])
+            mr_index = all_top_artists_uri.index(mr_top_artists['items'][i]['uri'])
+            sr_index = all_top_artists_uri.index(sr_top_artists['items'][i]['uri'])
+            
+            mr_artist = all_top_artists[mr_index]
+            sr_artist = all_top_artists[sr_index]
+
+            mr_change = sr_change = " *"
+            if mr_artist.lr_spot != -1:
+                diff = mr_artist.lr_spot - mr_artist.mr_spot
+                if diff > 0:
+                    mr_change = " +" + str(diff)
+                else:
+                    mr_change = " " + str(diff)
+                            
+            if sr_artist.lr_spot != -1:
+                diff = sr_artist.lr_spot - sr_artist.sr_spot
+                if diff > 0:
+                    sr_change = " +" + str(diff)
+                else:
+                    sr_change = " " + str(diff)
+
+            t.add_row([str(i+1),all_top_artists[lr_index].name, all_top_artists[mr_index].name+mr_change, all_top_artists[sr_index].name+sr_change])
+        
         t.align = 'l'
         t.align["Spot"] = 'r'
         print(t)
@@ -153,6 +209,8 @@ def GetUser():
         sr_top_tracks = spot.current_user_top_tracks(limit=20, time_range='short_term')
         
         t2 = PrettyTable(["Spot", "All-time", "Medium-range", "Short-range"])
+        
+        
         for i in range(len(lr_top_tracks['items'])):
             t2.add_row([str(i+1),lr_top_tracks['items'][i]['name'], mr_top_tracks['items'][i]['name'], sr_top_tracks['items'][i]['name']])
         t2.align = 'l'
