@@ -58,22 +58,27 @@ def GraphAlbum(album):
     Graph.AudioFeaturesBarGraph(average_song)
 
 def GetArtist():
-    # Add top tracks info
     name = input("Enter the artist's name\n")
     print("Generating information about " + name)
     result = sp.search(q='artist:' + name, type='artist')
     artist = result['artists']['items'][0]
     print(artist)
-    sp_albums = sp.artist_albums(artist['uri'], limit=3)
+    sp_albums = sp.artist_albums(artist['uri'])
     albums = []
     album_names = []
-    print("\n Collecting album names:\n")
+    top_tracks_name = []
+    top_tracks_pop = []
+    result = sp.artist_top_tracks(artist['uri'])
+    for i in range(len(result['tracks'])):
+        top_tracks_name.append(result['tracks'][i]['name'])
+        top_tracks_pop.append(result['tracks'][i]['popularity'])
+    print("\n Collecting information about albums by the "+name+":\n")
     for i in range(len(sp_albums['items'])):
         if sp_albums['items'][i]['type'] == 'album' and sp_albums['items'][i]['name'] not in album_names:
             print(sp_albums['items'][i]['name'])
             albums.append(GetAlbum(sp_albums['items'][i]))
             album_names.append(sp_albums['items'][i]['name'])
-    return Artist(artist, albums) 
+    return Artist(artist, albums, top_tracks_name, top_tracks_pop) 
 
 def GraphArtist(artist):
     Graph.AlbumPopularityOverTime(artist)
@@ -161,8 +166,7 @@ def GraphUser():
 def GetPlaylist():
     name = input("Please input the playlists name\n")
     result = sp.search(q='playlist:' + name, type='playlist')
-    print(result['playlists']['items'][0]['uri'])
-
+            
 def GraphPlaylist(songs):
     Graph.GraphPlaylist(songs)
 
@@ -188,7 +192,7 @@ while option != 'q':
         GraphUser()
     else:
         print("Value not understood, please enter a valid value") 
-    option = input("Type 'a' for artist, 's' for song, 'al' for album, 'p' for playlist, 'q' to quit and exit \n")
+    option = input("Type 'u' for user, 'a' for artist, 's' for song, 'al' for album, 'p' for playlist, 'q' to quit and exit \n")
 
 
 

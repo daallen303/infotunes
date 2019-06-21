@@ -2,11 +2,13 @@ from .album import Album
 
 class Artist:
     
-    def __init__(self, artist, albums):
+    def __init__(self, artist, albums, top_tracks_name, top_tracks_popularity):
         self.name = artist['name']
         self.uri = artist['uri']
         self.albums = albums
         self.genres = artist['genres']
+        self.top_tracks_name = top_tracks_name
+        self.top_tracks_popularity = top_tracks_popularity
         #self.similar_artist = artist['similar_artist']
         self.popularity = artist['popularity']
         self.first_release = albums[0].release_date
