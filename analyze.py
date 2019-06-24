@@ -96,14 +96,6 @@ def GetArtist():
 def GraphArtist(artist):
     Graph.AlbumPopularityOverTime(artist)
     
-    
-def GetAllSongsFromArtist(artist):
-    songs = []
-    for i in len(artist.albums):
-        for song in albums[i]:
-            songs.append(song)
-    return songs
-
 def GetAverageSong(songs, name):
     tempo = popularity = valence = loudness = duration_ms = danceability = speechiness = energy = acousticness = instrumentalness = liveness = count = 0
     for song in songs:
