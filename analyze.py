@@ -32,8 +32,12 @@ def GetSong(track_uri=None):
         # Also have a thing to enter the artists name
         query =  "artist:%"+artist_name+" track:%"+song_name
         result = sp.search(q=query, type='track')
-        print("Getting Information about "+song_name)
-        track = sp.track(result['tracks']['items'][0]['uri'])
+        if len(result['tracks']['items']) > 0:
+            print("Getting Information about "+song_name)
+            track = sp.track(result['tracks']['items'][0]['uri'])
+        else: 
+            print("Sorry, the search for "+song_name+" by " +artist_name+" returned no results. Please check the spellong and try again.")
+            return None
     else:
         track = sp.track(track_uri)
     audio_analysis = sp.audio_analysis(track['uri'])
@@ -52,7 +56,11 @@ def GetAlbum(album=None, full_info=False):
         artist_name = input("Enter the artist's name\n")
         query = "artist:%"+artist_name+" album:%"+album_name
         result = sp.search(q=query, type='album')
-        album = result['albums']['items'][0] 
+        if len(result['albums']['items'])>0:
+            album = result['albums']['items'][0] 
+        else :
+            print("Nothing matched the search for "+album_name+" by "+artist_name+ ", please try again")
+            return None
     tracks = sp.album_tracks(album['uri'])
     sp_album = sp.album(album['uri'])
     songs = []
@@ -72,10 +80,13 @@ def GraphAlbum(album):
 
 def GetArtist():
     name = input("Enter the artist's name\n")
-    print("Generating information about " + name)
     result = sp.search(q='artist:' + name, type='artist')
-    artist = result['artists']['items'][0]
-    print(artist)
+    if len(result['artists']['items']) > 0:
+        artist = result['artists']['items'][0]
+        print("Generating information about " + name)
+    else:
+        print("Sorry no artist matched the search for"+name+", please try again")
+        return None
     sp_albums = sp.artist_albums(artist['uri'])
     albums = []
     album_names = []
@@ -129,7 +140,10 @@ def GetAverageSong(songs, name):
 def GetUser():
     username = input("Please enter your username\n")
     scope = 'playlist-modify-public user-read-email user-top-read user-library-read'
-    token = util.prompt_for_user_token(username, scope)
+    try :
+        token = util.prompt_for_user_token(username, scope)
+    except :
+        print("Couldn't find the username"+username+", please make sure it is correct")
 
     if token:
         spot = spotipy.Spotify(auth=token)
@@ -227,13 +241,16 @@ option = input("Type 'u' for user, 'a' for artist, 's' for song, 'al' for album,
 while option != 'q':
     if option == 'a':
         artist = GetArtist()
-        GraphArtist(artist)
+        if artist != None:
+            GraphArtist(artist)
     elif option == 's':
         song = GetSong()
-        GraphSong(song)
+        if song != None:
+            GraphSong(song)
     elif option == 'al':
         album = GetAlbum(full_info=True)
-        GraphAlbum(album)
+        if album != None:
+            GraphAlbum(album)
     elif option == 'p':
         playlist = GetPlaylist()
         GraphPlaylist(playlist.songs)
