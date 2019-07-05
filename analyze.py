@@ -54,7 +54,7 @@ def GetAlbum(album=None, full_info=False):
     if album == None:
         album_name = input("Enter the album's name\n")
         artist_name = input("Enter the artist's name\n")
-        query = "artist:%"+artist_name+" album:%"+album_name
+        query = "artist:%"+ artist_name +" album:%"+ album_name
         result = sp.search(q=query, type='album')
         if len(result['albums']['items'])>0:
             album = result['albums']['items'][0] 
@@ -66,7 +66,7 @@ def GetAlbum(album=None, full_info=False):
     songs = []
     if full_info == True:
         print("Getting Information about the songs in "+album_name)
-        for i in range(2):
+        for i in range(len(tracks['items'])):
             songs.append(GetSong(tracks['items'][i]['uri']))
             print(songs[i].name)
     album = Album(sp_album, songs, len(tracks['items']))
