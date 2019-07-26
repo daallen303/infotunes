@@ -102,6 +102,8 @@ def GetArtist():
             print(sp_albums['items'][i]['name'])
             albums.append(GetAlbum(sp_albums['items'][i]))
             album_names.append(sp_albums['items'][i]['name'])
+    
+    albums.sort(key= lambda x: x.release_date) 
     return Artist(artist, albums, top_tracks_name, top_tracks_pop) 
 
 def GraphArtist(artist):
@@ -177,16 +179,24 @@ def GetUser():
                 all_top_artists_uri.append(sr_top_artists['items'][i]['uri'])
                 all_top_artists.append(TopArtist(sr_top_artists['items'][i]['name'], -1))
                 all_top_artists[-1].SetSrSpot(i)
-            
+
+        lr_artist_names = []
+        mr_artist_names = []
+        sr_artist_names = []
         for i in range(20):
+
+            # Get the index in all_top_artists of the artist at spot 1-20 for long, medium, and short range by using their uri
             lr_index = all_top_artists_uri.index(lr_top_artists['items'][i]['uri'])
             mr_index = all_top_artists_uri.index(mr_top_artists['items'][i]['uri'])
             sr_index = all_top_artists_uri.index(sr_top_artists['items'][i]['uri'])
             
             mr_artist = all_top_artists[mr_index]
             sr_artist = all_top_artists[sr_index]
-
+            
+            # initialize to be * for a new artists that isn't in the long range but is in med or short
             mr_change = sr_change = " *"
+            
+            # Get the difference of an artists spot in long range list and in medium range list
             if mr_artist.lr_spot != -1:
                 diff = mr_artist.lr_spot - mr_artist.mr_spot
                 if diff > 0:
@@ -194,18 +204,26 @@ def GetUser():
                 else:
                     mr_change = " " + str(diff)
                             
+            # Get the difference of an artists spot in long range list and in short range list
             if sr_artist.lr_spot != -1:
                 diff = sr_artist.lr_spot - sr_artist.sr_spot
                 if diff > 0:
                     sr_change = " +" + str(diff)
                 else:
                     sr_change = " " + str(diff)
+            
+            lr_artist_names.append(all_top_artists[lr_index].name)
+            mr_artist_names.append(all_top_artists[mr_index].name+mr_change)
+            sr_artist_names.append(all_top_artists[sr_index].name+sr_change)
 
-            t.add_row([str(i+1),all_top_artists[lr_index].name, all_top_artists[mr_index].name+mr_change, all_top_artists[sr_index].name+sr_change])
+        print(lr_artist_names)
+        Graph.TopArtists(lr_artist_names, mr_artist_names, sr_artist_names)
+
+           # t.add_row([str(i+1),all_top_artists[lr_index].name, all_top_artists[mr_index].name+mr_change, all_top_artists[sr_index].name+sr_change])
         
-        t.align = 'l'
-        t.align["Spot"] = 'r'
-        print(t)
+        #t.align = 'l'
+        #t.align["Spot"] = 'r'
+        #print(t)
 
         lr_top_tracks = []
         lr_top_tracks = spot.current_user_top_tracks(limit=20, time_range='long_term')

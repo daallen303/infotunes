@@ -130,16 +130,15 @@ class Graph:
         album_info = []
         album_type = []
         album_color = []
-
+        
         for album in artist.albums:
-            date = album.release_date
-            dates.append(datetime.datetime.strptime(album.release_date, "%m-%d-%Y"))
             
+            dates.append(album.release_date)
             counts.append(album.song_count)
             
             pops.append(album.popularity)
             album_info.append("<b><i>"+album.name+"</i></b><br><b>Recorded in:</b> "+
-                    album.release_date+"<br><b>Popularity</b>: "+str(album.popularity))
+                    datetime.datetime.strftime(album.release_date, "%m-%d-%Y")+"<br><b>Popularity</b>: "+str(album.popularity))
             if album.popularity < 10 and album.popularity >= 0:
                 album_color.append('#D3B073')
             elif album.popularity < 30 and album.popularity >= 10:
@@ -150,8 +149,6 @@ class Graph:
                 album_color.append('#99BE0B')
             else:
                 album_color.append('red')
-        
-        dates.sort()
         
         trace0 = go.Scatter(
                 x = dates,
@@ -250,3 +247,41 @@ class Graph:
         data = [trace0]
         fig = go.Figure(data=data, layout=layout)
         py.plotly.plot(fig, filename=name)
+
+    @staticmethod
+    def TopArtists(lr_artists, mr_artists, sr_artists):
+
+        trace0 = go.Table(
+            name = "dallen-us Top artists",
+            header=dict(values=['<b>Spot</b>', '<b>Long range</b>', '<b>Medium Range</b>', '<b>Short Range</b>'],
+                        fill_color="black",
+                        line_color="rgb(255,255,255)",
+                        align = "left",
+                        height = 30,
+                        font=dict(color='rgb(255,255,255)')),
+            
+            cells=dict(values=[[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],
+                        lr_artists, mr_artists, sr_artists],
+                        fill_color="rgb(60,60,60)",
+                        line_color="rgb(255,255,255)",
+                        align = ["right","left", "left", "left"],
+                        font=dict(color='rgb(255,255,255)'),
+                        height=40),
+            columnwidth=[100,400,400,400]
+            )
+
+        layout = go.Layout(
+            title =dict(text = "dallen-us Top artists",
+                font=dict(size = 18,
+                    color = 'rgb(255,255,255)')),
+                paper_bgcolor='rgb(60,60,60)'
+                )
+        
+        data = [trace0]
+        fig = go.Figure(data=data, layout=layout)
+        py.plotly.plot(fig, filename="dallen-us Top Artists")
+
+
+    @staticmethod
+    def TopSongs(lr_songs, mr_songs, sr_songs):
+        print("hi")
