@@ -87,7 +87,7 @@ def GetArtist():
     else:
         print("Sorry no artist matched the search for"+name+", please try again")
         return None
-    sp_albums = sp.artist_albums(artist['uri'])
+    sp_albums = sp.artist_albums(artist['uri'], limit=50)
     albums = []
     album_names = []
     top_tracks_name = []

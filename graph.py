@@ -5,6 +5,7 @@ from math import pi
 import pandas as pd
 import plotly as py
 import plotly.graph_objs as go
+import datetime
 
 py.tools.set_credentials_file(username='daallen303', api_key='2ziGQf8CeGbtEZQdisEI') 
 
@@ -123,7 +124,7 @@ class Graph:
     @staticmethod
     def AlbumPopularityOverTime(artist):
         
-        years = []
+        dates = []
         counts = []
         pops = []
         album_info = []
@@ -131,34 +132,34 @@ class Graph:
         album_color = []
 
         for album in artist.albums:
-            # year
-            year = int(album.release_date[:4],10)
-            years.append(year)
+            date = album.release_date
+            dates.append(datetime.datetime.strptime(album.release_date, "%m-%d-%Y"))
             
             counts.append(album.song_count)
-            # album popularity
+            
             pops.append(album.popularity)
             album_info.append("<b><i>"+album.name+"</i></b><br><b>Recorded in:</b> "+
                     album.release_date+"<br><b>Popularity</b>: "+str(album.popularity))
-            if album.popularity < 10 and album.popularity > 0:
+            if album.popularity < 10 and album.popularity >= 0:
                 album_color.append('#D3B073')
-            elif album.popularity < 30 and album.popularity > 10:
+            elif album.popularity < 30 and album.popularity >= 10:
                 album_color.append('#A6A27A')
-            elif album.popularity < 50 and album.popularity > 30:
+            elif album.popularity < 50 and album.popularity >= 30:
                 album_color.append('#3E4D56')
-            elif album.popularity < 80 and album.popularity > 50:
+            elif album.popularity < 70 and album.popularity >= 50:
                 album_color.append('#99BE0B')
             else:
                 album_color.append('red')
         
-        #plt.axis([min(x)-2,max(x)+2,0, max(y)+2])
+        dates.sort()
+        
         trace0 = go.Scatter(
-                x = years,
-                y = counts,
+                x = dates,
+                y = pops,
                 mode='markers',
                 marker=dict(
-                    size=pops,
-                    color='#3E4D56'
+                    size=counts,
+                    color=album_color
                     ),
                 text=album_info,
                 )
@@ -171,32 +172,26 @@ class Graph:
                     title = "Release Date",
                     gridcolor = 'rgb(255,255,255)',
                     color='rgb(255,255,255)',
+                    tickformat = "%m-%d-%Y",
                     zerolinewidth = 1,
-                    ticklen = 0,
+                    ticklen=0,
                     gridwidth = 2
                 ),
                 yaxis=dict(
-                    title='Number of Tracks',
+                    title='Popularity',
+                    range = [0,100],
                     gridcolor='rgb(255,255,255)',
                     color='rgb(255,255,255)',
                     zerolinewidth=1,
                     ticklen=0,
                     gridwidth=2,
                 ),
-                paper_bgcolor='rgb(60,60,60)',
-                plot_bgcolor='rgb(60,60,60)'
+                paper_bgcolor='rgb(40,40,40)',
+                plot_bgcolor='rgb(40,40,40)'
             )
         data = [trace0]
         fig = go.Figure(data=data, layout=layout) 
         py.plotly.plot(fig, filename=artist.name+" albums over time")
-        #plt.title(artist.name+" albums over time")
-        #plt.ylabel('Number of Songs')
-        #plt.xlabel('Year released')
-        #use the scatter function
-        #plt.scatter(x, y, s=z*100)
-        #plt.show()
-
-
 
     @staticmethod
     def GraphPlaylist(songs, name):

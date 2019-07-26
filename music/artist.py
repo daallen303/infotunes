@@ -22,8 +22,9 @@ class Artist:
 
     def GetAlbumNames(self):
         return album_names
+    
     def GetUri(self):
-        return self.uri
+        return self.uri    
 
 # Class for artist information
 
