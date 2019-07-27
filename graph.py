@@ -13,17 +13,57 @@ class Graph:
 
     @staticmethod
     def AudioFeaturesBarGraph(song):
-        
-        labels = ('danceability', 'speechiness', 'acousticness','energy', 'instrumentalness', 'liveness')
-        y_pos = np.arange(len(labels))
-        confidence = [song.danceability, song.speechiness, song.acousticness, song.energy, song.instrumentalness, song.liveness]
 
-        plt.bar(y_pos, confidence, align='center', alpha=.1, color='blue',linewidth=1)
-        plt.xticks(y_pos, labels)
-        plt.ylabel('Confidence')
-        plt.title(song.name +' Song Features')
-        plt.ylim(0,1)
-        plt.show()
+        labels = ('Danceability', 'Speechiness', 'Acousticness','Energy', 'Instrumentalness', 'Liveness')
+        confidence = [song.danceability, song.speechiness, song.acousticness, song.energy, song.instrumentalness, song.liveness]
+        text = ["<b>Danceability</b> describes how suitable a track is for dancing based on a combination of musical</br> elements including tempo, rhythm stability, beat strength, and overall regularity. </br>A value of 0.0 is least danceable and 1.0 is most danceable.", 
+                
+                "<b>Speechiness</b> detects the presence of spoken words in a track. The more exclusively speech-like </br>the recording (e.g. talk show, audio book, poetry), the closer</br> to 1.0 the attribute value. Values above 0.66 describe tracks that are probably made entirely of</br> spoken words. Values between 0.33 and 0.66 describe tracks that may contain both</br> music and speech, either in sections or layered, including </br>such cases as rap music. Values below 0.33 most likely represent music and other non-speech-like tracks.", 
+                
+                "<b>Acousticness</b> A confidence measure from 0.0 to 1.0 of whether the track is acoustic.</br> 1.0 represents high confidence the track is acoustic.", 
+                
+                "<b>Energy</b> is a measure from 0.0 to 1.0 and represents a perceptual measure of intensity and</br> activity. Typically, energetic tracks feel fast, loud, and noisy. For example, death metal has</br> high energy, while a Bach prelude scores low on the scale. </br>Perceptual features contributing to this attribute include dynamic range, </br>perceived loudness, timbre, onset rate, and general entropy.", 
+                
+                "<b>Instrumentalness</b> predicts whether a track contains no vocals.</br> “Ooh” and “aah” sounds are treated as instrumental in this context. </br>Rap or spoken word tracks are clearly “vocal”. The closer the instrumentalness value is to 1.0</br>, the greater likelihood the track</br> contains no vocal content. Values above 0.5 are intended to represent </br>instrumental tracks, but confidence is higher as the value approaches 1.0.", 
+                
+                "<b>Liveness</b> Detects the presence of an audience in the recording.</br>Higher liveness values represent an increased probability</br>that the track was performed live. A value</br> above 0.8 provides strong likelihood that the track is live."]
+
+        trace0 = go.Bar(width=.75,
+                marker=dict(line=dict(color='white',
+                    width=2),
+                    color='black'),
+                text=text,
+                y = confidence,
+                x = labels)
+
+        layout = go.Layout(title=dict(text="Track features for "+song.name+ " by "+ song.artist,
+                            font=dict(size=20,
+                                color='white')),
+
+                xaxis=dict(title=dict(text="Song feature",
+                    font=dict(size=18,
+                        color='white')),
+                    color='white'),
+                
+                yaxis=dict(title=dict(text="Confidence",
+                    font=dict(size=18,
+                        color='white')),
+                    color='white',
+                    nticks=10,
+                    range=[0,1]),
+                
+                plot_bgcolor='rgb(60,60,60)',
+                paper_bgcolor='rgb(60,60,60)'
+                
+                )
+        data = [trace0]
+        fig = go.Figure(data=data, layout=layout)
+        py.plotly.plot(fig, filename="Track features for "+song.name+ " by "+ song.artist)
+
+
+
+        
+
     
 
     # Fix to more accurately represent a song

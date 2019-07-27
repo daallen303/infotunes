@@ -46,7 +46,7 @@ def GetSong(track_uri=None):
     return song
 
 def GraphSong(song):
-    Graph.AudioFeaturesRadarPlot(song)
+    #Graph.AudioFeaturesRadarPlot(song)
     Graph.AudioFeaturesBarGraph(song)
     # audio features bar graph and spider graph thingy etc.
 
