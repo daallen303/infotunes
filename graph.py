@@ -25,56 +25,6 @@ class Graph:
         plt.ylim(0,1)
         plt.show()
     
-    #need to add Mode as well so it shows if the song is minor or major
-    #also need to make it more optimal
-    @staticmethod
-    def AlbumKeys(songs):
-        C=Db=D=Eb=E=F=Gb=G=Ab=A=Bb=B=0
-        for song in songs:
-            if song.key == 0:
-                C += 1
-            if song.key == 1:
-                Db += 1
-            if song.key == 2:
-                D += 1
-            if song.key == 3:
-                Eb += 1
-            if song.key == 4:
-                E += 1
-            if song.key == 5:
-                F += 1
-            if song.key == 6:
-                Gb += 1
-            if song.key == 7:
-                G+= 1
-            if song.key == 8:
-                Ab += 1
-            if song.key == 9:
-                A += 1
-            if song.key == 10:
-                Bb += 1
-            if song.key == 11:
-                B += 1
-        labels = ['C','Db','D','Eb','E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B']
-        sizes = [C,Db,D,Eb,E,F,Gb,G,Ab,A,Bb, B]
-        colors = ['gold', 'yellowgreen', 'lightcoral', 'lightskyblue','blue', 'orange', 'pink','yellow', 'purple', 'red', 'green', 'grey']
-
-        delete_indexes = []
-        for i in range(len(sizes)):
-            if sizes[i] == 0:
-                delete_indexes.append(i)
-        count = 0
-        for i in delete_indexes:
-                del sizes[i-count]
-                del labels[i-count]
-                del colors[i-count]
-                count+=1
-        #explode = (0,0.1,0,0,0,0)
-        plt.title("Song Keys for the Lumineers Cleopatra")    
-        plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%')
-        
-        plt.axis('equal')
-        plt.show()
 
     # Fix to more accurately represent a song
     @staticmethod
@@ -255,18 +205,21 @@ class Graph:
             name = "dallen-us Top artists",
             header=dict(values=['<b>Spot</b>', '<b>Long range</b>', '<b>Medium Range</b>', '<b>Short Range</b>'],
                         fill_color="black",
-                        line_color="rgb(255,255,255)",
-                        align = "left",
+                        line_color="black",
+                        align = "center",
                         height = 30,
-                        font=dict(color='rgb(255,255,255)')),
+                        font=dict(color='rgb(255,255,255)',
+                            size = 18)),
             
             cells=dict(values=[[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],
                         lr_artists, mr_artists, sr_artists],
                         fill_color="rgb(60,60,60)",
-                        line_color="rgb(255,255,255)",
+                        line_color="black",
                         align = ["right","left", "left", "left"],
-                        font=dict(color='rgb(255,255,255)'),
-                        height=40),
+                        font=dict(color='rgb(255,255,255)',
+                            size=18
+                            ),
+                        height=30),
             columnwidth=[100,400,400,400]
             )
 
@@ -284,4 +237,123 @@ class Graph:
 
     @staticmethod
     def TopSongs(lr_songs, mr_songs, sr_songs):
-        print("hi")
+        
+        trace0 = go.Table(
+            name = "dallen-us Top Songs",
+            header=dict(values=['<b>Spot</b>', '<b>Long range</b>', '<b>Medium Range</b>', '<b>Short Range</b>'],
+                        fill_color="black",
+                        line_color="black",
+                        align = "center",
+                        height = 30,
+                        font=dict(color='rgb(255,255,255)',
+                            size = 18)),
+            
+            cells=dict(values=[[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],
+                        lr_artists, mr_artists, sr_artists],
+                        fill_color="rgb(60,60,60)",
+                        line_color="black",
+                        align = ["right","left", "left", "left"],
+                        font=dict(color='rgb(255,255,255)',
+                            size=18
+                            ),
+                        height=30),
+            columnwidth=[100,400,400,400]
+            )
+
+        layout = go.Layout(
+            title =dict(text = "dallen-us Top Songs",
+                font=dict(size = 18,
+                    color = 'rgb(255,255,255)')),
+                paper_bgcolor='rgb(60,60,60)'
+                )
+        
+        data = [trace0]
+        fig = go.Figure(data=data, layout=layout)
+        py.plotly.plot(fig, filename="dallen-us Top Songs")
+
+    #need to add Mode as well so it shows if the song is minor or major
+    #also need to make it more optimal
+    @staticmethod
+    def AlbumKeys(songs, album_name, artist_name):
+        key_info=["<b>Song names:</b>"]*12
+        C=Db=D=Eb=E=F=Gb=G=Ab=A=Bb=B=0
+        for song in songs:
+            if song.key == 0:
+                C += 1
+                key_info[0]+= song.name+'<br>'
+            if song.key == 1:
+                Db += 1
+                key_info[1]+= song.name+'<br>'
+            if song.key == 2:
+                D += 1
+                key_info[2]+= song.name+'<br>'
+            if song.key == 3:
+                Eb += 1
+                key_info[3]+= song.name+'<br>'
+            if song.key == 4:
+                E += 1
+                key_info[4]+= song.name+'<br>'
+            if song.key == 5:
+                F += 1
+                key_info[5]+= song.name+'<br>'
+            if song.key == 6:
+                Gb += 1
+                key_info[6]+= song.name+'<br>'
+            if song.key == 7:
+                G+= 1
+                key_info[7]+= song.name+'<br>'
+            if song.key == 8:
+                Ab += 1
+                key_info[8]+= song.name+'<br>'
+            if song.key == 9:
+                A += 1
+                key_info[9]+= song.name+'<br>'
+            if song.key == 10:
+                Bb += 1
+                key_info[10]+= song.name+'<br>'
+            if song.key == 11:
+                B += 1
+                key_info[11]+= song.name+'<br>'
+        labels = ['C','Db','D','Eb','E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B']
+        values = [C,Db,D,Eb,E,F,Gb,G,Ab,A,Bb, B]
+        colors = ['gold', 'yellowgreen', 'lightcoral', 'lightskyblue','blue', 'orange', 'pink','yellow', 'purple', 'red', 'green', 'grey']
+
+        delete_indexes = []
+        for i in range(len(values)):
+            if values[i] == 0:
+                delete_indexes.append(i)
+        count = 0
+        for i in delete_indexes:
+                del values[i-count]
+                del labels[i-count]
+                del colors[i-count]
+                del key_info[i-count]
+                count+=1
+        trace0 = go.Pie(labels=labels,
+                        values=values,
+                        textinfo="percent",
+                        text=key_info,
+                        hole=.3,
+                        hoverinfo='text',
+                        marker=dict(colors=colors,
+                            line=dict(width=2,
+                                color="black"))
+                            )
+    
+
+        layout = go.Layout(
+            title =dict(text = "Song keys for "+ album_name + "By " + artist_name,
+                font=dict(size = 18,
+                    color = 'rgb(255,255,255)')),
+                paper_bgcolor='rgb(60,60,60)',
+            
+                legend=dict(font=dict(
+                                size=18,
+                                color="white"),
+                    borderwidth=2,
+                    bordercolor="white")
+                )
+
+        data = [trace0]
+        fig = go.Figure(data = data, layout = layout)        
+        py.plotly.plot(fig, filename="Keys of album songs")

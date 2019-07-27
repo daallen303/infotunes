@@ -73,10 +73,10 @@ def GetAlbum(album=None, full_info=False):
     return album
 
 def GraphAlbum(album):
-    average_song = GetAverageSong(album.songs, album.name)
-    Graph.AlbumKeys(album.songs)
-    Graph.AudioFeaturesRadarPlot(average_song)
-    Graph.AudioFeaturesBarGraph(average_song)
+    #average_song = GetAverageSong(album.songs, album.name)
+    Graph.AlbumKeys(album.songs, album.name, album.artist)
+    #Graph.AudioFeaturesRadarPlot(average_song)
+    #Graph.AudioFeaturesBarGraph(average_song)
 
 def GetArtist():
     name = input("Enter the artist's name\n")
