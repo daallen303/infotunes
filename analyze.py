@@ -2,6 +2,8 @@ from graph import Graph
 from music.album import Album
 from music.song import Song
 from music.artist import Artist
+from music.user import User
+
 from credentials import SpotifyManager 
 from prettytable import PrettyTable
 import spotipy.util as util
@@ -12,18 +14,6 @@ import time
 spotify_manager = SpotifyManager()
 sp = spotify_manager.GetCertified()
 
-class TopArtist:
-    def __init__(self, name, lr_spot):
-        self.name = name 
-        self.lr_spot = lr_spot
-        self.mr_spot = -1
-        self.sr_spot = -1
-
-    def SetMrSpot(self, mr_spot):
-        self.mr_spot = mr_spot
-
-    def SetSrSpot(self, sr_spot):
-        self.sr_spot = sr_spot
 
 def GetSong(track_uri=None):   
     if track_uri == None:
@@ -150,100 +140,16 @@ def GetUser():
     if token:
         spot = spotipy.Spotify(auth=token)
         spot.trace = False
-        #saved_tracks = sp.current_user_saved_tracks()
-        #print(saved_tracks)
-        lr_top_artists = []
-        lr_top_artists = spot.current_user_top_artists(limit=20, time_range='long_term')
-        mr_top_artists = [] 
-        mr_top_artists = spot.current_user_top_artists(limit=20, time_range='medium_term')
-        sr_top_artists = []
-        sr_top_artists = spot.current_user_top_artists(limit=20, time_range='short_term')
         
-        all_top_artists = []
-        all_top_artists_uri = []
-        
-        t = PrettyTable(["Spot", "All-time", "Medium-range", "Short-range"])
-        for i in range(len(lr_top_artists['items'])):
-            all_top_artists.append(TopArtist(lr_top_artists['items'][i]['name'],i))
-            all_top_artists_uri.append(lr_top_artists['items'][i]['uri'])
-        for i in range(len(lr_top_artists['items'])):
-            if mr_top_artists['items'][i]['uri'] in all_top_artists_uri:
-                all_top_artists[all_top_artists_uri.index(mr_top_artists['items'][i]['uri'])].SetMrSpot(i)
-            else:
-                all_top_artists_uri.append(mr_top_artists['items'][i]['uri'])
-                all_top_artists.append(TopArtist(mr_top_artists['items'][i]['name'], -1))
-                all_top_artists[-1].SetMrSpot(i)
-            if sr_top_artists['items'][i]['uri'] in all_top_artists_uri:
-                all_top_artists[all_top_artists_uri.index(sr_top_artists['items'][i]['uri'])].SetSrSpot(i)
-            else:
-                all_top_artists_uri.append(sr_top_artists['items'][i]['uri'])
-                all_top_artists.append(TopArtist(sr_top_artists['items'][i]['name'], -1))
-                all_top_artists[-1].SetSrSpot(i)
-
-        lr_artist_names = []
-        mr_artist_names = []
-        sr_artist_names = []
-        for i in range(20):
-
-            # Get the index in all_top_artists of the artist at spot 1-20 for long, medium, and short range by using their uri
-            lr_index = all_top_artists_uri.index(lr_top_artists['items'][i]['uri'])
-            mr_index = all_top_artists_uri.index(mr_top_artists['items'][i]['uri'])
-            sr_index = all_top_artists_uri.index(sr_top_artists['items'][i]['uri'])
-            
-            mr_artist = all_top_artists[mr_index]
-            sr_artist = all_top_artists[sr_index]
-            
-            # initialize to be * for a new artists that isn't in the long range but is in med or short
-            mr_change = sr_change = " *"
-            
-            # Get the difference of an artists spot in long range list and in medium range list
-            if mr_artist.lr_spot != -1:
-                diff = mr_artist.lr_spot - mr_artist.mr_spot
-                if diff > 0:
-                    mr_change = " +" + str(diff)
-                else:
-                    mr_change = " " + str(diff)
-                            
-            # Get the difference of an artists spot in long range list and in short range list
-            if sr_artist.lr_spot != -1:
-                diff = sr_artist.lr_spot - sr_artist.sr_spot
-                if diff > 0:
-                    sr_change = " +" + str(diff)
-                else:
-                    sr_change = " " + str(diff)
-            
-            lr_artist_names.append(all_top_artists[lr_index].name)
-            mr_artist_names.append(all_top_artists[mr_index].name+mr_change)
-            sr_artist_names.append(all_top_artists[sr_index].name+sr_change)
-
-        print(lr_artist_names)
-        Graph.TopArtists(lr_artist_names, mr_artist_names, sr_artist_names)
-
-           # t.add_row([str(i+1),all_top_artists[lr_index].name, all_top_artists[mr_index].name+mr_change, all_top_artists[sr_index].name+sr_change])
-        
-        #t.align = 'l'
-        #t.align["Spot"] = 'r'
-        #print(t)
-
-        lr_top_tracks = []
-        lr_top_tracks = spot.current_user_top_tracks(limit=20, time_range='long_term')
-        mr_top_tracks = [] 
-        mr_top_tracks = spot.current_user_top_tracks(limit=20, time_range='medium_term')
-        sr_top_tracks = []
-        sr_top_tracks = spot.current_user_top_tracks(limit=20, time_range='short_term')
-        
-        t2 = PrettyTable(["Spot", "All-time", "Medium-range", "Short-range"])
-        
-        
-        for i in range(len(lr_top_tracks['items'])):
-            t2.add_row([str(i+1),lr_top_tracks['items'][i]['name'], mr_top_tracks['items'][i]['name'], sr_top_tracks['items'][i]['name']])
-        t2.align = 'l'
-        t2.align["Spot"] = 'r'
-        print(t2)
+        user = User(username, spot) 
+        return user
     else:
         print("Can't get token for", username)
-def GraphUser():
-    print("hello")
+
+
+def GraphUser(user):
+    Graph.TopArtists(user.lr_artist_names, user.mr_artist_names, user.sr_artist_names)
+    Graph.TopSongs(user.lr_top_track_names, user.mr_top_track_names, user.sr_top_track_names)
 
 def GetPlaylist():
     name = input("Please input the playlists name\n")
@@ -274,13 +180,10 @@ while option != 'q':
         GraphPlaylist(playlist.songs)
     elif option == 'u':
         user = GetUser()
-        GraphUser()
+        GraphUser(user)
     else:
         print("Value not understood, please enter a valid value") 
     option = input("Type 'u' for user, 'a' for artist, 's' for song, 'al' for album, 'p' for playlist, 'q' to quit and exit \n")
-
-
-
 
 
 

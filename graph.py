@@ -127,8 +127,8 @@ class Graph:
             counts.append(album.song_count)
             
             pops.append(album.popularity)
-            album_info.append("<b><i>"+album.name+"</i></b><br><b>Recorded in:</b> "+
-                    datetime.datetime.strftime(album.release_date, "%m-%d-%Y")+"<br><b>Popularity</b>: "+str(album.popularity))
+            album_info.append("<b><i>"+album.name+"</i></b><br><b>Released:</b> "+
+                    datetime.datetime.strftime(album.release_date, "%m-%d-%Y")+"<br><b>Popularity</b>: "+str(album.popularity)+"<br><b>Track Count</b>: "+str(album.song_count))
             if album.popularity < 10 and album.popularity >= 0:
                 album_color.append('#D3B073')
             elif album.popularity < 30 and album.popularity >= 10:
@@ -151,7 +151,7 @@ class Graph:
                 text=album_info,
                 )
         layout = go.Layout(
-                title=dict(text = artist.name+" albums over time",
+                title=dict(text = artist.name+" Album Popularity Over Time",
                             font = dict( size = 18,
                                 color = 'white')),
                 hovermode='closest',
@@ -178,7 +178,7 @@ class Graph:
             )
         data = [trace0]
         fig = go.Figure(data=data, layout=layout) 
-        py.plotly.plot(fig, filename=artist.name+" albums over time")
+        py.plotly.plot(fig, filename=artist.name+" Album Popularity Over Time")
 
     @staticmethod
     def GraphPlaylist(songs, name):
@@ -276,7 +276,7 @@ class Graph:
 
 
     @staticmethod
-    def TopSongs(lr_songs, mr_songs, sr_songs):
+    def TopSongs(lr_tracks, mr_tracks, sr_tracks):
         
         trace0 = go.Table(
             name = "dallen-us Top Songs",
@@ -289,7 +289,7 @@ class Graph:
                             size = 18)),
             
             cells=dict(values=[[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],
-                        lr_artists, mr_artists, sr_artists],
+                        lr_tracks, mr_tracks, sr_tracks],
                         fill_color="rgb(60,60,60)",
                         line_color="black",
                         align = ["right","left", "left", "left"],
@@ -382,7 +382,7 @@ class Graph:
     
 
         layout = go.Layout(
-            title =dict(text = "Song keys for "+ album_name + "By " + artist_name,
+            title =dict(text = "Song keys for "+ album_name + " By " + artist_name,
                 font=dict(size = 18,
                     color = 'rgb(255,255,255)')),
                 paper_bgcolor='rgb(60,60,60)',
@@ -396,4 +396,4 @@ class Graph:
 
         data = [trace0]
         fig = go.Figure(data = data, layout = layout)        
-        py.plotly.plot(fig, filename="Keys of album songs")
+        py.plotly.plot(fig, filename="Song keys for "+ album_name + " By " + artist_name)
